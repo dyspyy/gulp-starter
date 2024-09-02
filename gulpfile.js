@@ -6,6 +6,10 @@ const uglify = require('gulp-uglify-es').default;
 const browserSync = require('browser-sync').create()
 const autoPrefixer = require('gulp-autoprefixer');
 const clean = require('gulp-clean');
+const avif = require('gulp-avif');
+const webp = require('gulp-webp');
+const imagemin = require('gulp-imagemin');
+const cached = require('gulp-cached');
 
 
 function styles() {
@@ -27,18 +31,21 @@ function scripts() {
         .pipe(browserSync.stream())
 }
 
-function browsersync() {
-    browserSync.init({
-        server: {
-            baseDir: "src/"
-        }
-    });
+function images() {
+    return src(['src/img/all/*.*', '!src/img/all/*.svg'])
+    .pipe(avif({ quality : 50}))
+    .pipe(src('src/img/all/*.*'))
+    .pipe(webp())
+    .pipe(src('src/img/all/*.*'))
+    .pipe(imagemin())
+    .pipe(dest('src/img/dist'))
 }
 
 function cleanDist() {
     return src('dist')
     .pipe(clean())
 }
+
 
 function building() {
     return src([
@@ -50,6 +57,11 @@ function building() {
 }
 
 function watching() {
+    browserSync.init({
+        server: {
+            baseDir: "src/"
+        }
+    });
     watch(['src/sass/style.sass'], styles)
     watch(['src/js/main.js'], scripts)
     watch(['src/*.html']).on('change', browserSync.reload)
@@ -58,9 +70,9 @@ function watching() {
 
 
 exports.styles = styles;
+exports.images = images;
 exports.scripts = scripts;
-exports.browsersync = browsersync;
 exports.watching = watching;
 
 exports.build = series(cleanDist, building)
-exports.default = parallel(styles, scripts, browsersync, watching);
+exports.default = parallel(styles, images, scripts, watching);
