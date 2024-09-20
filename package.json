@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "minify": "imagemin src/img/src/*.{png,jpg,jpeg} --out-dir=src/img/temp",
+    "convert-avif": "imagemin src/img/temp/*.{png,jpg,jpeg} --plugin=avif --out-dir=src/img/",
+    "convert-webp": "imagemin src/img/temp/*.{png,jpg,jpeg} --plugin=webp --out-dir=src/img/",
+    "clean": "rmdir /s /q src\\img\\temp",
+    "images": "npm run minify && npm run convert-avif && npm run convert-webp && gulp sprite && npm run clean",
+    "project": "npm run images && gulp fonts && gulp"
   },
   "author": "",
   "license": "ISC",
@@ -14,8 +19,19 @@
     "gulp-autoprefixer": "^8.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-concat": "^2.6.1",
+    "gulp-fonter": "^0.3.0",
+    "gulp-fontmin": "^0.7.4",
+    "gulp-include": "^2.4.1",
     "gulp-sass": "^5.1.0",
+    "gulp-shell": "^0.8.0",
+    "gulp-svg-sprite": "^2.0.3",
+    "gulp-ttf2woff2": "^4.0.1",
     "gulp-uglify-es": "^3.0.0",
+    "gulp-webfont": "^0.0.1-4",
+    "imagemin": "^9.0.0",
+    "imagemin-avif": "^0.1.6",
+    "imagemin-cli": "^8.0.0",
+    "imagemin-webp": "^8.0.0",
     "sass": "^1.77.8"
   }
 }
